@@ -3,6 +3,9 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
+# Fix OpenSSL issue with older webpack
+ENV NODE_OPTIONS=--openssl-legacy-provider
+
 # Copy package files
 COPY package*.json ./
 
@@ -21,7 +24,7 @@ FROM node:18-alpine
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm ci --omit=dev
 
 # Copy built frontend
 COPY --from=builder /app/build ./build
